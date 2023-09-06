@@ -61,5 +61,31 @@ movies_shows <- read.table("ejercicio_modulo3.txt", header = TRUE, sep = ",")
 class(movies_shows)
 str(movies_shows)
 
+# resulta que estas variables debian ser de tipo factor. No tengo claro el por qué.
+movies_shows$Netflix <- as.factor(movies_shows$Netflix)
+movies_shows$Hulu <- as.factor(movies_shows$Hulu)
+movies_shows$Prime.Video <- as.factor(movies_shows$Prime.Video)
+movies_shows$Disney. <- as.factor(movies_shows$Disney.)
+movies_shows$Type <- as.factor(movies_shows$Type)
+# y este por que numeric?
+movies_shows$Rotten.Tomatoes <- as.numeric(gsub("/100", "", movies_shows$Rotten.Tomatoes))
+
+str(movies_shows)
+# escribirle al monitor: ¿por qué en este caso se trataba de factors?
+
+preguntasMod3 <- read.csv("archivo_datos.csv", header=TRUE, sep = ",")
+
+class(preguntasMod3)
+
+str(preguntasMod3)
 
 
+examencito <- read.csv("archivo4.csv", header=TRUE, sep = ",")
+class(examencito)
+install.packages("MASS")
+library(MASS)
+data(package = "MASS")
+str(Boston)
+str(Animals)
+# guardar el workspace:
+#save.image(file = "Ws_ejer_cap_8.RData")
