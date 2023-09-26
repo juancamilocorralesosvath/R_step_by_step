@@ -89,3 +89,103 @@ str(Boston)
 str(Animals)
 # guardar el workspace:
 #save.image(file = "Ws_ejer_cap_8.RData")
+
+#4 Geometrías para mostrar evolución
+library(ggplot2)
+library(dplyr)
+library(gapminder)
+
+# se emplea el operador pipe para 
+# pasar los datos y filtrar los 
+# datos
+
+
+# Gráfico de líneas
+gapminder %>%
+  filter(country == "Colombia") %>%
+  ggplot( aes(x = year, y =gdpPercap)) +
+  geom_line() +
+  labs( y="PIB percápita ($US)", 
+        x="Año") +
+  theme_minimal()
+
+# ahora, que pasa si queremos incluir otros pa+ises ára comparar sus evoluciones
+# la variable pais es de clase factor.
+gapminder %>%
+  filter(country %in% c("Colombia", "Peru", "Chile", "Mexico")) %>%
+  ggplot( aes(x = year, y =gdpPercap, color = country)) +
+  geom_line() +
+  labs( y="PIB percápita ($US)", 
+        x="Año", color = "País") +
+  theme_minimal()
+
+# Barras agrupadas
+
+# Las barras agrupadas permiten comparar la evolución de la composición en el tiempo de una variable cualitativa de clase factor.
+
+d1 <- gapminder %>% 
+  # se agrupan los casos por año y continente
+  group_by(year, continent) %>% 
+  # se cuentan los países por cada continente, para cada año
+  # frecuencia
+  summarise( paises = n()) %>% 
+  # se crea la nueva variable con la frecuencia relativa
+  mutate(Prop_paises = 100 * paises / sum(paises))
+
+glimpse(d1)
+# en la capa de datos usamos el objeto d1. en la capa de aesthetics mapeamos los años al eje horizontal y en el eje vertical la participacion porcentual de cada continente
+# el relleno de las barras corresponde al respectivo continente.
+# position = dodge quiere decir que las barras estaran una al lado de la otra
+# stat = identity es para mapear al eje vertical los valores de una columna (y = prop_paises)
+ggplot(d1, aes(x = as.character(year), y = Prop_paises, fill = continent))+
+    geom_bar(position = "dodge", stat = "identity")+
+    labs(y = "% del numero de paises total",
+         x = "año", fill = "Continente")+
+    theme_minimal()
+# El gráfico de barras agrupadas también puede ser empleado para mostrar la evolución de una variable cuantitativa y una cualitativa. Por ejemplo, podemos ver cómo ha cambiado la participación en la población mundial de cada continente
+
+d2 <- gapminder %>% 
+  group_by(year, continent) %>% 
+  summarise( Poblacion = sum(pop)) %>% 
+  group_by(year) %>% 
+  mutate(Prop_Poblacion = 100 * Poblacion / sum(Poblacion))
+
+ggplot(d2, aes(x = as.character(year), 
+               y = Prop_Poblacion, fill = continent))+
+  geom_bar(position = "dodge", stat="identity")+
+  labs(y = "% de la población mundial", 
+       x = "Año", fill = "Continente")+
+  theme_minimal()
+
+# Columnas apiladas
+# 1
+ggplot(d1, aes(x = as.character(year), y = Prop_paises, fill = continent))+
+  geom_bar(position = "stack", stat = "identity")+
+  labs(y = "% del numero de paises total",
+       x = "año", fill = "Continente")+
+  theme_minimal()
+# 2
+ggplot(d2, aes(x = as.character(year), 
+               y = Prop_Poblacion, fill = continent))+
+  geom_bar(position = "stack", stat="identity")+
+  labs(y = "% de la población mundial", 
+       x = "Año", fill = "Continente")+
+  theme_minimal()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
